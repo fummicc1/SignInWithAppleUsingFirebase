@@ -6,12 +6,27 @@
 //
 
 import SwiftUI
+import FirebaseCore
 
 @main
 struct SignInWithAppleUsingFirebaseApp: App {
+    
+    init() {
+        FirebaseApp.configure()
+    }
+    
+    private var window: UIWindow? {
+        guard let scene = UIApplication.shared.connectedScenes.first,
+              let delegate = scene.delegate as? UIWindowSceneDelegate,
+              let window = delegate.window else {
+            return nil
+        }
+        return window
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environment(\.window, window)
         }
     }
 }

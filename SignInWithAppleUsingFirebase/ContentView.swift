@@ -6,11 +6,32 @@
 //
 
 import SwiftUI
+import AuthenticationServices
+import FirebaseAuth
 
 struct ContentView: View {
+    @Environment(\.window) var window
+    @State private var loginState: LoginState = .idle
+    @StateObject var controller: SignInWithAppleController = SignInWithAppleController()
+    private let authClient: FirebaseAuthClientType = FirebaseAuthClient()
+    
+    @ViewBuilder
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        if let credential = controller.credential {
+            authClient.signIn(with: credential)
+            return ProgressView("Loading")
+        }
+        Section {
+            Text("Hello")
+        }
+        SignInWithAppleButton(
+            onRequest: { request in
+                loginState = .progress
+                controller.startSignInWithAppleFlow(with: request)
+            }, onCompletion: { _ in }
+        ).onAppear {
+            controller.window = window
+        }
     }
 }
 
